@@ -32,6 +32,9 @@ import org.springframework.util.ResourceUtils;
  * from Strings when running in an ApplicationContext, using the particular
  * context's resource loading strategy.
  *
+ * Spring 将资源的定义和资源的加载区分开了，Resource 定义了统一的资源，那资源的加载则由 ResourceLoader 来统一定义。
+ * ResourceLoader 为 Spring 资源加载的统一抽象，具体的资源加载则由相应的实现类来完成，所以我们可以将 ResourceLoader 称作为统一资源定位器。
+ * Annotator jojo.wang
  * @author Juergen Hoeller
  * @since 10.03.2004
  * @see Resource
@@ -46,24 +49,18 @@ public interface ResourceLoader {
 
 
 	/**
-	 * Return a Resource handle for the specified resource location.
-	 * <p>The handle should always be a reusable resource descriptor,
-	 * allowing for multiple {@link Resource#getInputStream()} calls.
-	 * <p><ul>
-	 * <li>Must support fully qualified URLs, e.g. "file:C:/test.dat".
-	 * <li>Must support classpath pseudo-URLs, e.g. "classpath:test.dat".
-	 * <li>Should support relative file paths, e.g. "WEB-INF/test.dat".
-	 * (This will be implementation-specific, typically provided by an
-	 * ApplicationContext implementation.)
-	 * </ul>
-	 * <p>Note that a Resource handle does not imply an existing resource;
-	 * you need to invoke {@link Resource#exists} to check for existence.
-	 * @param location the resource location
-	 * @return a corresponding Resource handle (never {@code null})
-	 * @see #CLASSPATH_URL_PREFIX
-	 * @see Resource#exists()
-	 * @see Resource#getInputStream()
-	 */
+	 * @Author jojo.wang
+	 * @Description 根据所提供资源的路径 location 返回 Resource 实例，但是它不确保该 Resource 一定存在，
+	 * 需要调用 Resource.exist()方法判断。该方法支持以下模式的资源加载：
+	 * URL位置资源，如”file:C:/test.dat”
+	 * ClassPath位置资源，如”classpath:test.dat”
+	 * 相对路径资源，如”WEB-INF/test.dat”，此时返回的Resource实例根据实现不同而不同
+	 *
+	 * 该方法的主要实现是在其子类 DefaultResourceLoader 中实现
+	 * @Date 13:15 2019-04-26
+	 * @param location
+	 * @return org.springframework.core.io.Resource
+	 **/
 	Resource getResource(String location);
 
 	/**
@@ -76,6 +73,13 @@ public interface ResourceLoader {
 	 * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
 	 * @see org.springframework.util.ClassUtils#forName(String, ClassLoader)
 	 */
+	/**
+	 * @Author jojo.wang
+	 * @Description 返回 ClassLoader 实例，对于想要获取 ResourceLoader 使用的 ClassLoader 用户来说，可以直接调用该方法来获取，
+	 * @Date 13:16 2019-04-26
+	 * @param
+	 * @return java.lang.ClassLoader
+	 **/
 	@Nullable
 	ClassLoader getClassLoader();
 

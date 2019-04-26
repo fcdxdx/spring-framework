@@ -38,6 +38,8 @@ import org.springframework.util.ResourceUtils;
  * be opened; "isOpen" will always return false; "getURL" and "getFile"
  * throw an exception; and "toString" will return the description.
  * 统一资源
+ * 如果我们想要实现自定义的 Resource，
+ * 记住不要实现 Resource 接口，而应该继承 AbstractResource 抽象类，然后根据当前的具体资源特性覆盖相应的方法即可。
  * @author Juergen Hoeller
  * @since 28.12.2003
  * Annotator jojo.wang
@@ -81,6 +83,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 资源是否可读
+	 * 直接返回true，表示可读
 	 * @Date 11:59 2019-04-26
 	 * @param 
 	 * @return boolean
@@ -96,6 +99,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 资源所代表的句柄是否被一个stream打开了
+	 * 直接返回 false，表示未被打开
 	 * @Date 11:58 2019-04-26
 	 * @param 
 	 * @return boolean
@@ -111,6 +115,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 是否是file
+	 * 直接返回false，表示不为 File
 	 * @Date 11:59 2019-04-26
 	 * @param 
 	 * @return boolean
@@ -127,6 +132,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 返回资源的URL句柄
+	 * 抛出 FileNotFoundException 异常，交给子类实现
 	 * @Date 11:59 2019-04-26
 	 * @param 
 	 * @return URL
@@ -143,6 +149,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 返回资源的URI句柄
+	 * 基于 getURL() 返回的 URL 构建 URI
 	 * @Date 12:00 2019-04-26
 	 * @param 
 	 * @return URI
@@ -165,6 +172,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 返回访问资源的File句柄
+	 * 抛出 FileNotFoundException 异常，交给子类实现
 	 * @Date 12:00 2019-04-26
 	 * @param 
 	 * @return File
@@ -180,6 +188,13 @@ public abstract class AbstractResource implements Resource {
 	 * <p>This is the same as in {@link Resource}'s corresponding default method
 	 * but mirrored here for efficient JVM-level dispatching in a class hierarchy.
 	 */
+	/**
+	 * @Author jojo.wang
+	 * @Description  根据 getInputStream() 的返回结果构建 ReadableByteChannel
+	 * @Date 13:04 2019-04-26
+	 * @param
+	 * @return java.nio.channels.ReadableByteChannel
+	 **/
 	@Override
 	public ReadableByteChannel readableChannel() throws IOException {
 		return Channels.newChannel(getInputStream());
@@ -194,6 +209,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 资源内容长度
+	 * 这个资源内容长度实际就是资源的字节长度，通过全部读取一遍来判断
 	 * @Date 12:00 2019-04-26
 	 * @param 
 	 * @return long
@@ -277,6 +293,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * @Author jojo.wang
 	 * @Description 获取资源的文件名
+	 * 获取资源名称，默认返回 null
 	 * @Date 12:02 2019-04-26
 	 * @param 
 	 * @return String

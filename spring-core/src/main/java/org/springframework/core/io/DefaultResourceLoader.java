@@ -40,6 +40,14 @@ import org.springframework.util.StringUtils;
  * and a {@link ClassPathResource} if it is a non-URL path or a
  * "classpath:" pseudo-URL.
  *
+ * DefaultResourceLoader 是 ResourceLoader 的默认实现，
+ * 它接收 ClassLoader 作为构造函数的参数或者使用不带参数的构造函数，
+ * 在使用不带参数的构造函数时，使用的 ClassLoader 为默认的 ClassLoader
+ * （一般为Thread.currentThread().getContextClassLoader()），
+ * 可以通过 ClassUtils.getDefaultClassLoader()获取。
+ * 当然也可以调用 setClassLoader()方法进行后续设置
+ * Annotator jojo.wang
+ *
  * @author Juergen Hoeller
  * @since 10.03.2004
  * @see FileSystemResourceLoader
@@ -140,6 +148,16 @@ public class DefaultResourceLoader implements ResourceLoader {
 	}
 
 
+	/**
+	 * @Author jojo.wang
+	 * @Description ResourceLoader 中最核心的方法为
+	 * 它根据提供的 location 返回相应的 Resource
+	 * DefaultResourceLoader 对该方法提供了核心实现
+	 * (它的两个子类都没有提供覆盖该方法，所以可以断定ResourceLoader 的资源加载策略就封装 DefaultResourceLoader中)
+	 * @Date 13:21 2019-04-26
+	 * @param location
+	 * @return org.springframework.core.io.Resource
+	 **/
 	@Override
 	public Resource getResource(String location) {
 		Assert.notNull(location, "Location must not be null");
